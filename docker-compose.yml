@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+  php:
+    build: ./php7.2
+    volumes:
+       - ./src:/var/www/html
+    ports:
+       - 8080:80
+
+  mysql:
+    image: mysql:5.7
+    volumes:
+       - ./mysql:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=db
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=root
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      - PMA_ARBITRARY=1
+      - PMA_HOST=mysql
+      - PMA_USER=root
+      - PMA_PASSWORD=root
+
+    links:
+      - mysql
+    ports:
+      - 4040:80
+    volumes:
+      - ./phpmyadmin/sessions:/sessions
