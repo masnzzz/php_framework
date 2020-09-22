@@ -2,6 +2,9 @@
 
 class ClassLoader
 {
+    /**
+     * @var array $dirs 読み込むクラスファイルを格納 
+     */
     protected $dirs;
 
     /**
@@ -16,6 +19,8 @@ class ClassLoader
 
     /**
      * 渡されたクラスファイルの読み込みを行い登録する
+     * 
+     * @param $dir
      */
     public function registerDir($dir)
     {
@@ -26,6 +31,8 @@ class ClassLoader
 
     /**
      * オートロード時に自動的に呼び出されクラスファイルの読み込みを行う
+     * 
+     * @param $class
      */
     public function loadClass($class)
     {
