@@ -99,4 +99,53 @@ class Request
     {
         return $_SERVER['REQUEST_URI'];
     }
+
+
+
+    /**
+     * ベースURLを取得する
+     * 
+     * @return string ベースURL
+     */
+    public function getBaseUrl()
+    {
+        $script_name = $_SERVER['SCRIPT_NAME'];
+        
+        $request_uri = $this->getRequestUri();
+        
+        // フロントコントローラの指定の有無をチェック
+        if (0 === strpos($request_uri, $script_name)) {
+            // フロントコントローラがURLに含まれる場合
+            return $script_name;
+        } elseif (0 === strpos($request_uri, dirname($script_name))) {
+            // フロントコントローラが省略されている場合
+            return rtrim(dirname($script_name), '/');
+        }
+        
+        return '';
+    }
+    
+    
+    
+    /**
+     * PATH_INFOを取得する
+     * 
+     * @return string PATH_INFO
+     */
+    public function getPathInfo()
+    {
+        $base_url = $this->getBaseUrl();
+        $request_uri = $this->getRequestUri();
+
+        // REQUEST_URIにGETパラメータを取得
+        $pos = strpos($request_uri, '?');
+        
+        if (true === $pos) {
+            // REQUEST_URIにGETパラメータが含まれた場合、値を取得
+            $request_uri = substr($request_uri, 0, $pos);
+        }
+
+        // GETパラメータを除いたREQUEST_URIからベースURLを除いた値をPATH_INFOとして返す
+        return (string)substr($request_uri, strlen($base_url));
+    }
 }
