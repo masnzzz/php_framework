@@ -14,10 +14,10 @@ class Router
     /**
      * ルーティング定義配列を変換する
      * 
-     * @param $definitions
+     * @param array $definitions
      * @return array $routes 変換済みのURL
      */
-    public function compileRoutes($definitions)
+    public function compileRoutes(array $definitions): array
     {
         $routes = array();
         
@@ -26,13 +26,12 @@ class Router
             // URLをスラッシュごとに分割する
             $tokens = explode('/', ltrim($url, '/'));
             
-            foreach ($tokens as $i => $token) {
+            foreach ($tokens as &$token) {
                 if (0 === strpos($token, ':')) {
                     // コロンの後に続く動的パラメータがあった場合
                     $name = substr($token, 1);
                     $token = '(?P<' . $name . '>[^/]+)';
                 }
-                $tokens[$i] = $token;
             }
             
             $pattern = '/' . implode('/', $tokens);

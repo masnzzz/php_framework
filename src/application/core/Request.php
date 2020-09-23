@@ -5,9 +5,9 @@ class Request
     /**
      * HTTPメソッドがPOSTかどうかチェックする
      * 
-     * @return boolean
+     * @return bool
      */
-    public function isPost()
+    public function isPost(): bool
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // POSTであればtrueを返す
@@ -26,7 +26,7 @@ class Request
      * @param null $default
      * @return string|null
      */
-    public function getGet($name, $default = null)
+    public function getGet(string $name, $default = null)
     {
         if (isset($_GET[$name])) {
             return $_GET[$name];
@@ -44,7 +44,7 @@ class Request
      * @param null $default
      * @return string|null
      */
-    public function getPost($name, $default = null)
+    public function getPost(string $name, $default = null)
     {
         if (isset($_GET[$name])) {
             return $_GET['name'];
@@ -61,7 +61,7 @@ class Request
      * 
      * @return string サーバのホスト名
      */
-    public function getHost()
+    public function getHost(): string
     {
         if (!empty($_SERVER['HTTP_HOST'])) {
             return $_SERVER['HTTP_HOST'];
@@ -78,7 +78,7 @@ class Request
      * 
      * @return boolean
      */
-    public function isSsl()
+    public function isSsl(): bool
     {
         if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
             // HTTPSでアクセスされた場合、$_SERVER['HTTPS']に'on'が含まれる
@@ -95,7 +95,7 @@ class Request
      * 
      * @return string $_SERVER['REQUEST_URI'] URLのホスト部分以降の値
      */
-    public function getRequestUri()
+    public function getRequestUri(): string
     {
         return $_SERVER['REQUEST_URI'];
     }
@@ -107,11 +107,10 @@ class Request
      * 
      * @return string ベースURL
      */
-    public function getBaseUrl()
+    public function getBaseUrl(): string
     {
-        $script_name = $_SERVER['SCRIPT_NAME'];
-        
         $request_uri = $this->getRequestUri();
+        $script_name = $_SERVER['SCRIPT_NAME'];
         
         // フロントコントローラの指定の有無をチェック
         if (0 === strpos($request_uri, $script_name)) {
@@ -124,15 +123,15 @@ class Request
         
         return '';
     }
-    
-    
-    
+
+
+
     /**
      * PATH_INFOを取得する
      * 
      * @return string PATH_INFO
      */
-    public function getPathInfo()
+    public function getPathInfo(): string
     {
         $base_url = $this->getBaseUrl();
         $request_uri = $this->getRequestUri();
@@ -140,7 +139,7 @@ class Request
         // REQUEST_URIにGETパラメータを取得
         $pos = strpos($request_uri, '?');
         
-        if (true === $pos) {
+        if (false !== $pos) {
             // REQUEST_URIにGETパラメータが含まれた場合、値を取得
             $request_uri = substr($request_uri, 0, $pos);
         }
