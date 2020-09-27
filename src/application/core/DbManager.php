@@ -13,6 +13,11 @@ class DbManager
     protected $connections = array();
 
     /**
+     * @var array Repositoryクラスと接続名の対応
+     */
+    protected $repository_connection_map = array();
+
+    /**
      * 接続を実行する
      * 
      * @param string $name connectionsプロパティのキー
@@ -58,5 +63,38 @@ class DbManager
         }
         
         return $this->connections[$name];
+    }
+
+
+
+    /**
+     * repository_connection_mapプロパティにテーブルごとのRepositoryクラスを追加する
+     * 
+     * @param string $repository_name
+     * @param string $name
+     */
+    public function setRepositoryConnectionMap(string $repository_name, string $name)
+    {
+        $this->repository_connection_map[$repository_name] = $name;
+    }
+
+
+
+    /**
+     * Repositoryクラスに対応する接続情報を取得する
+     * 
+     * @param $repository_name
+     * @return array
+     */
+    public function getConnectionForRepository($repository_name)
+    {
+        if (isset($this->repository_connection_map[$repository_name])) {
+            $name = $this->repository_connection_map[$repository_name];
+            $con = $this->getConnection($name);
+        } else {
+            $con = $this->getConnection();
+        }
+        
+        return $con;
     }
 }
