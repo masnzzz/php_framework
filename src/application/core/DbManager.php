@@ -18,6 +18,50 @@ class DbManager
     protected $repository_connection_map = array();
 
     /**
+     * @var array
+     */
+    protected $repositories = array();
+
+
+
+    public function __destruct()
+    {
+        foreach ($this->repositories as $repository) {
+            unset($repository);
+        }
+        
+        foreach ($this->connections as $con) {
+            unset($con);
+        }
+    }
+
+
+
+    /**
+     * リポジトリクラスのインスタンスを生成して取得する
+     *
+     * @param string $repository_name
+     * @return mixed repositories[$repository_name]
+     */
+    public function get(string $repository_name)
+    {
+        if (!isset($this->repositories[$repository_name])) {
+            // Repositoryのクラス名を指定
+            $repository_class = $repository_name . 'Repository';
+            // コネクションを取得
+            $con = $this->getConnectionForRepository($repository_name);
+            // 動的にインスタンス生成
+            $repository = new $repository_class($con);
+            // インスタンスを保持し$repositoriesに格納
+            $this->repositories[$repository_name] = $repository;
+        }
+
+        return $this->repositories[$repository_name];
+    }
+    
+    
+    
+    /**
      * 接続を実行する
      * 
      * @param string $name connectionsプロパティのキー
