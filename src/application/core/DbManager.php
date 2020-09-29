@@ -30,8 +30,8 @@ class DbManager
             unset($repository);
         }
         
-        foreach ($this->connections as $con) {
-            unset($con);
+        foreach ($this->connections as $connection) {
+            unset($connection);
         }
     }
 
@@ -49,9 +49,9 @@ class DbManager
             // Repositoryのクラス名を指定
             $repository_class = $repository_name . 'Repository';
             // コネクションを取得
-            $con = $this->getConnectionForRepository($repository_name);
+            $connection = $this->getConnectionForRepository($repository_name);
             // 動的にインスタンス生成
-            $repository = new $repository_class($con);
+            $repository = new $repository_class($connection);
             // インスタンスを保持し$repositoriesに格納
             $this->repositories[$repository_name] = $repository;
         }
@@ -77,7 +77,7 @@ class DbManager
         ), $params);
         
         // PDOクラスのインスタンスを作成
-        $con = new PDO(
+        $connection = new PDO(
             $params['dsn'],
             $params['user'],
             $params['password'],
@@ -86,9 +86,9 @@ class DbManager
         
         // PDOインスタンスを作成
         // PDO内部でエラー発生時に例外を発生させるためPDO::ATTR_ERRMODE属性をPDO::ERRMODE_EXCEPTIONに設定する
-        $con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         
-        $this->connections[$name] = $con;
+        $this->connections[$name] = $connection;
     }
 
 
@@ -134,11 +134,11 @@ class DbManager
     {
         if (isset($this->repository_connection_map[$repository_name])) {
             $name = $this->repository_connection_map[$repository_name];
-            $con = $this->getConnection($name);
+            $connection = $this->getConnection($name);
         } else {
-            $con = $this->getConnection();
+            $connection = $this->getConnection();
         }
         
-        return $con;
+        return $connection;
     }
 }
