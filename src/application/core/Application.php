@@ -133,18 +133,27 @@ abstract class Application
 
 
 
+    /**
+     * runActionに値を渡し、レスポンス送信する
+     */
     public function run()
     {
-        $params = $this->router->resolve($this->request->getPathInfo());
-        if ($params === false) {
-            // todo-A
+        try {
+            $params = $this->router->resolve($this->request->getPathInfo());
+            if ($params === false) {
+                // PATHパラメータの読み込みに失敗した場合
+                throw new HttpNotFoundException('No route found for ' . $this->request->getPathInfo());
+            }
+
+            $controller = $params['controller'];
+            $action = $params['action'];
+
+            $this->runAction($controller, $action, $params);
+            
+        } catch (HttpNotFoundException $e) {
+            $this->render404Page($e);
         }
-        
-        $controller = $params['controller'];
-        $action = $params['action'];
-        
-        $this->runAction($controller, $action, $params);
-        
+
         $this->response->send();
     }
 
@@ -152,10 +161,11 @@ abstract class Application
 
     /**
      * アクションを実行
-     * 
+     *
      * @param $controller_name
      * @param $action
      * @param array $params
+     * @throws HttpNotFoundException
      */
     public function runAction($controller_name, $action, $params = array())
     {
@@ -164,7 +174,7 @@ abstract class Application
         $controller = $this->findController($controller_class);
         if ($controller === false) {
             // コントローラクラスの読み込みに失敗した場合
-            // todo-B
+            throw new HttpNotFoundException($controller_class . ' controller is not found');
         }
         
         // アクションを実行する
@@ -202,5 +212,33 @@ abstract class Application
         
         // コントローラークラスを生成する
         return new $controller_class($this);
+    }
+
+
+
+    /**
+     * 404エラーを返す
+     * 
+     * @param $e
+     */
+    protected function render404Page($e)
+    {
+        $this->response->setStatusCode(404, 'Not Found');
+        $message = $this->isDebugMode() ? $e->getMessage() : 'Page not found.';
+        $message = htmlspecialchars($message, ENT_QUOTES, 'UTF-8');
+        
+        $this->response->setContent(<<<EOF
+<!DOCTYPE>
+<html lang="ja">
+    <head>
+        <meta charset="utf-8">
+        <title>404</title>
+    </head>
+    <body>
+        {$message}
+    </body>
+</html>
+EOF
+        );
     }
 }
