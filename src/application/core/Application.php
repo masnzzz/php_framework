@@ -16,6 +16,7 @@ abstract class Application
     protected $response;
     protected $session;
     protected $db_manager;
+    protected $router;
 
     public function __construct($debug = false)
     {
@@ -128,5 +129,78 @@ abstract class Application
     public function getWebDir()
     {
         return $this->getRootDir() . '/web';
+    }
+
+
+
+    public function run()
+    {
+        $params = $this->router->resolve($this->request->getPathInfo());
+        if ($params === false) {
+            // todo-A
+        }
+        
+        $controller = $params['controller'];
+        $action = $params['action'];
+        
+        $this->runAction($controller, $action, $params);
+        
+        $this->response->send();
+    }
+
+
+
+    /**
+     * アクションを実行
+     * 
+     * @param $controller_name
+     * @param $action
+     * @param array $params
+     */
+    public function runAction($controller_name, $action, $params = array())
+    {
+        $controller_class = ucfirst($controller_name) . 'Controller';
+        
+        $controller = $this->findController($controller_class);
+        if ($controller === false) {
+            // コントローラクラスの読み込みに失敗した場合
+            // todo-B
+        }
+        
+        // アクションを実行する
+        $content = $controller->run($action, $params);
+        
+        $this->response->setContent($content);
+    }
+
+
+
+    /**
+     * コントローラークラスファイルを読み込む
+     * 
+     * @param string $controller_class
+     * @return false|mixed
+     */
+    protected function findController(string $controller_class)
+    {
+        if (!class_exists($controller_class)) {
+            // クラスが定義済みではなかった場合
+            $controller_file = $this->getControllerDir() . '/' . $controller_class . '.php';
+            
+            if (!is_readable($controller_file)) {
+                // 読み込みに失敗した場合
+                return false;
+            } else {
+                // 読み込みに成功した場合コントローラファイルを読み込む
+                require_once $controller_file;
+                
+                if (!class_exists($controller_class)) {
+                    return false;
+                }
+            }
+        }
+        
+        // コントローラークラスを生成する
+        return new $controller_class($this);
     }
 }
