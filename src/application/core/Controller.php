@@ -43,8 +43,6 @@ abstract class Controller
         }
         
         // アクションを実行
-        $content = $this->$action_method($params);
-        
-        return $content;
+        return $this->$action_method($params);
     }
 }
