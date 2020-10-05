@@ -21,9 +21,9 @@ class DbManager
      * @var array
      */
     protected $repositories = array();
-
-
-
+    
+    
+    
     public function __destruct()
     {
         foreach ($this->repositories as $repository) {

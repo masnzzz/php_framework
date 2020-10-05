@@ -19,6 +19,10 @@ abstract class Application
     protected $router;
     protected $login_action = array();
 
+    /**
+     * Application constructor.
+     * @param false $debug
+     */
     public function __construct($debug = false)
     {
         $this->setDebugMode($debug);
@@ -87,6 +91,13 @@ abstract class Application
      */
     abstract public function registerRoutes();
 
+
+
+    /**
+     * デバッグモードが有効か判定する
+     * 
+     * @return bool
+     */
     public function isDebugMode()
     {
         return $this->debug;
@@ -136,6 +147,8 @@ abstract class Application
 
     /**
      * runActionに値を渡し、レスポンス送信する
+     * 
+     * @throws HttpNotFoundException
      */
     public function run()
     {

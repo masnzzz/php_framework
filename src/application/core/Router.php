@@ -3,7 +3,11 @@
 class Router
 {
     protected $routes;
-    
+
+    /**
+     * Router constructor.
+     * @param $definitions
+     */
     public function __construct($definitions)
     {
         $this->routes = $this->compileRoutes($definitions);

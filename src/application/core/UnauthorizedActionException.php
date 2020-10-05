@@ -1,3 +1,3 @@
 <?php
 
-class UnauthorizedActionException extends Exception {};
+class UnauthorizedActionException extends Exception {}

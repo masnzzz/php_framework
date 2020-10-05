@@ -9,9 +9,12 @@ abstract class Controller
     protected $response;
     protected $session;
     protected $db_manager;
-    
     protected $auth_actions = array();
-    
+
+    /**
+     * Controller constructor.
+     * @param $application
+     */
     public function __construct($application)
     {
         // コントローラ名からクラス名を逆算してプロパティに設定
