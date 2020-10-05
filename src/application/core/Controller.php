@@ -23,13 +23,13 @@ abstract class Controller
     }
 
 
-
     /**
      * アクションを実行
-     * 
+     *
      * @param $action
      * @param array $params
      * @return mixed
+     * @throws HttpNotFoundException
      */
     public function run($action, $params = array())
     {
