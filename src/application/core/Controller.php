@@ -10,6 +10,8 @@ abstract class Controller
     protected $session;
     protected $db_manager;
     
+    protected $auth_actions = array();
+    
     public function __construct($application)
     {
         // コントローラ名からクラス名を逆算してプロパティに設定
@@ -21,30 +23,38 @@ abstract class Controller
         $this->session     = $application->getSession();
         $this->db_manager  = $application->getDbManager();
     }
-
-
+    
+    
+    
     /**
      * アクションを実行
      *
-     * @param $action
+     * @param string $action
      * @param array $params
      * @return mixed
      * @throws HttpNotFoundException
+     * @throws UnauthorizedActionException
      */
-    public function run($action, $params = array())
+    public function run(string $action, $params = array())
     {
         $this->action_name = $action;
         
         // アクション名となるメソッド名をプロパティに格納
         $action_method = $action . 'Action';
         if (!method_exists($this, $action_method)) {
-            // $action_methodの値のメソッドが存在しない場合
+            // $action_methodの値のメソッドが存在しない場合404を返す
             $this->forward404();
+        }
+        
+        if ($this->needsAuthentication($action) && !$this->session->isAuthenticated()) {
+            // needsAuthenticationの返り値がtrueで、かつ未ログインである場合
+            throw new UnauthorizedActionException();
         }
         
         // アクションを実行
         return $this->$action_method($params);
     }
+
 
 
     /**
@@ -165,5 +175,23 @@ abstract class Controller
             return true;
         }
         return false;
+    }
+
+
+
+    /**
+     * ログインが必要かどうかを判定する
+     * 
+     * @param string $action
+     * @return bool
+     */
+    protected function needsAuthentication(string $action): bool
+    {
+        if ($this->auth_actions === true || (is_array($this->auth_actions) && in_array($action, $this->auth_actions))) {
+            // $auth_actionsプロパティを元に指定したアクションがログイン必須かどうかチェックする
+            return false;
+        }
+        
+        return true;
     }
 }
