@@ -61,7 +61,8 @@ class View
         
         if ($_layout) {
             // Controllerクラスから呼び出され、レイアウトファイル名が指定された場合
-            $content = $this->render($_layout,
+            $content = $this->render(
+                $_layout,
                 array_merge($this->layout_variables, array(
                     '_content' => $content,
                 )

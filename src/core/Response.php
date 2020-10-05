@@ -31,7 +31,7 @@ class Response
      * 
      * @param mixed $content HTMLなどクライアントに返す情報
      */
-    public function setContext($content)
+    public function setContent($content)
     {
         $this->content = $content;
     }

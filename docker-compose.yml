@@ -4,7 +4,7 @@ services:
   php:
     build: ./php7.2
     volumes:
-       - ./src/web:/var/www/html
+       - ./src:/var/www/html
     ports:
        - 8080:80
 

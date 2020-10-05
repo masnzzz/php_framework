@@ -77,8 +77,6 @@ abstract class Application
 
     /**
      * アプリケーションのルートディレクトリへのパスを返す
-     * 
-     * @return mixed
      */
     abstract public function getRootDir();
 
@@ -86,10 +84,8 @@ abstract class Application
 
     /**
      * ルーティング定義配列を返す
-     * 
-     * @return mixed
      */
-    abstract public function registerRoutes();
+    abstract protected function registerRoutes();
 
 
 

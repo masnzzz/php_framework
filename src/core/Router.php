@@ -18,10 +18,10 @@ class Router
     /**
      * ルーティング定義配列を変換する
      * 
-     * @param array $definitions
+     * @param $definitions
      * @return array $routes 変換済みのURL
      */
-    public function compileRoutes(array $definitions): array
+    public function compileRoutes($definitions): array
     {
         $routes = array();
         
@@ -53,9 +53,8 @@ class Router
      * 
      * @param string $path_info
      * @return array|false $params
-     * 
      */
-    public function resolve(string $path_info): array
+    public function resolve(string $path_info)
     {
         if ('/' !== substr($path_info, 0, 1)) {
             // PATH_INFOの先頭がスラッシュではない場合、スラッシュを付与
