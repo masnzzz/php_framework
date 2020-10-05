@@ -6,6 +6,7 @@ class Router
 
     /**
      * Router constructor.
+     * 
      * @param $definitions
      */
     public function __construct($definitions)
@@ -18,10 +19,10 @@ class Router
     /**
      * ルーティング定義配列を変換する
      * 
-     * @param $definitions
+     * @param array $definitions
      * @return array $routes 変換済みのURL
      */
-    public function compileRoutes($definitions): array
+    public function compileRoutes(array $definitions): array
     {
         $routes = array();
         
@@ -48,11 +49,10 @@ class Router
 
 
     /**
-     * PATHとルーティング定義配列のマッチングをして
-     * ルーティングパラメータの特定を行う
+     * 指定されたPATH_INFOを元にルーティングパラメータを特定する
      * 
      * @param string $path_info
-     * @return array|false $params
+     * @return array|false
      */
     public function resolve(string $path_info)
     {

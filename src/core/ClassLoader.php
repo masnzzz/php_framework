@@ -8,7 +8,7 @@ class ClassLoader
     protected $dirs;
 
     /**
-     * PHPにオートローダークラスを登録する
+     * 自身をオートロードスタックに登録
      */
     public function register()
     {
@@ -18,9 +18,9 @@ class ClassLoader
 
 
     /**
-     * 渡されたクラスファイルの読み込みを行い登録する
+     * オートロード対象のディレクトリを登録
      * 
-     * @param $dir
+     * @param string $dir
      */
     public function registerDir($dir)
     {
@@ -32,7 +32,7 @@ class ClassLoader
     /**
      * オートロード時に自動的に呼び出されクラスファイルの読み込みを行う
      * 
-     * @param $class
+     * @param string $class
      */
     public function loadClass($class)
     {
@@ -40,6 +40,7 @@ class ClassLoader
             $file = $dir . '/' . $class . '.php';
             if (is_readable($file)) {
                 require $file;
+                
                 return;
             }
         }

@@ -21,12 +21,12 @@ class Session
 
     
     /**
-     * $_SESSIONへの設定を行う
+     * セッションに値を設定
      * 
-     * @param $name
-     * @param $value
+     * @param string $name
+     * @param mixed $value
      */
-    public function set($name, $value)
+    public function set(string $name, $value)
     {
         $_SESSION[$name] = $value;
     }
@@ -34,10 +34,10 @@ class Session
 
     
     /**
-     * $_SESSIONの取得を行う
+     * セッションから値を取得
      * 
-     * @param $name
-     * @param null $default
+     * @param string $name
+     * @param mixed $default 指定したキーが存在しない場合のデフォルト値
      * @return mixed|null
      */
     public function get($name, $default = null)
@@ -51,11 +51,11 @@ class Session
 
     
     /**
-     * $_SESSIONから指定した値を削除する
+     * セッションから値を削除
      * 
-     * @param $name
+     * @param string $name
      */
-    public function remove($name)
+    public function remove(string $name)
     {
         unset($_SESSION[$name]);
     }
@@ -63,7 +63,7 @@ class Session
 
     
     /**
-     * $_SESSIONをからにする
+     * セッションを空にする
      */
     public function clear()
     {
@@ -73,9 +73,9 @@ class Session
 
     
     /**
-     * セッションIDの発行を行う
+     * セッションIDを再生成する
      * 
-     * @param bool $destroy
+     * @param bool $destroy trueの場合は古いセッションを破棄する
      */
     public function regenerate($destroy = true)
     {
@@ -90,7 +90,7 @@ class Session
 
     
     /**
-     * ユーザーのログイン状態の変更を行う
+     * 認証状態を設定
      * 
      * @param $bool
      */
@@ -104,11 +104,11 @@ class Session
 
     
     /**
-     * ログインしているかどうかの判定を行う
+     * 認証済みか判定
      * 
-     * @return mixed|null
+     * @return bool
      */
-    public function isAuthenticated()
+    public function isAuthenticated(): bool
     {
         return $this->get('_authenticated', false);
     }

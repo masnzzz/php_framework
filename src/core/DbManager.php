@@ -21,51 +21,14 @@ class DbManager
      * @var array
      */
     protected $repositories = array();
-    
-    
-    
-    public function __destruct()
-    {
-        foreach ($this->repositories as $repository) {
-            unset($repository);
-        }
-        
-        foreach ($this->connections as $connection) {
-            unset($connection);
-        }
-    }
 
 
 
     /**
-     * リポジトリクラスのインスタンスを生成して取得する
+     * データベースへ接続
      *
-     * @param string $repository_name
-     * @return mixed repositories[$repository_name]
-     */
-    public function get(string $repository_name)
-    {
-        if (!isset($this->repositories[$repository_name])) {
-            // Repositoryのクラス名を指定
-            $repository_class = $repository_name . 'Repository';
-            // コネクションを取得
-            $connection = $this->getConnectionForRepository($repository_name);
-            // 動的にインスタンス生成
-            $repository = new $repository_class($connection);
-            // インスタンスを保持し$repositoriesに格納
-            $this->repositories[$repository_name] = $repository;
-        }
-
-        return $this->repositories[$repository_name];
-    }
-    
-    
-    
-    /**
-     * 接続を実行する
-     * 
-     * @param string $name connectionsプロパティのキー
-     * @param array $params PDOクラスのコンストラクタに渡す情報の配列
+     * @param string $name
+     * @param array $params
      */
     public function connect(string $name, array $params)
     {
@@ -97,9 +60,9 @@ class DbManager
      * connectメソッドで接続したコネクションを取得する
      * 
      * @param null $name
-     * @return array
+     * @return PDO
      */
-    public function getConnection($name = null)
+    public function getConnection($name = null): PDO
     {
         if (is_null($name)) {
             // 名前の指定が無ければ最初に作成したPDOクラスのインスタンスを返す
@@ -112,7 +75,7 @@ class DbManager
 
 
     /**
-     * repository_connection_mapプロパティにテーブルごとのRepositoryクラスを追加する
+     * リポジトリごとのコネクション情報を設定
      * 
      * @param string $repository_name
      * @param string $name
@@ -125,12 +88,12 @@ class DbManager
 
 
     /**
-     * Repositoryクラスに対応する接続情報を取得する
+     * 指定されたリポジトリに対応するコネクションを取得
      * 
      * @param $repository_name
-     * @return array
+     * @return PDO
      */
-    public function getConnectionForRepository($repository_name)
+    public function getConnectionForRepository($repository_name): PDO
     {
         if (isset($this->repository_connection_map[$repository_name])) {
             $name = $this->repository_connection_map[$repository_name];
@@ -140,5 +103,42 @@ class DbManager
         }
         
         return $connection;
+    }
+
+
+
+    /**
+     * リポジトリクラスのインスタンスを生成して取得する
+     *
+     * @param string $repository_name
+     * @return DbRepository
+     */
+    public function get(string $repository_name): DbRepository
+    {
+        if (!isset($this->repositories[$repository_name])) {
+            // Repositoryのクラス名を指定
+            $repository_class = $repository_name . 'Repository';
+            // コネクションを取得
+            $connection = $this->getConnectionForRepository($repository_name);
+            // 動的にインスタンス生成
+            $repository = new $repository_class($connection);
+            // インスタンスを保持し$repositoriesに格納
+            $this->repositories[$repository_name] = $repository;
+        }
+
+        return $this->repositories[$repository_name];
+    }
+
+
+
+    public function __destruct()
+    {
+        foreach ($this->repositories as $repository) {
+            unset($repository);
+        }
+        
+        foreach ($this->connections as $connection) {
+            unset($connection);
+        }
     }
 }

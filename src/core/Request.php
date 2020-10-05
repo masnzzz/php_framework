@@ -3,7 +3,7 @@
 class Request
 {
     /**
-     * HTTPメソッドがPOSTかどうかチェックする
+     * リクエストメソッドがPOSTかどうか判定
      * 
      * @return bool
      */
@@ -20,11 +20,11 @@ class Request
 
 
     /**
-     * $_GET変数から値を取得する
+     * GETパラメータを取得
      * 
      * @param string $name
-     * @param null $default
-     * @return string|null
+     * @param mixed $default 指定したキーが存在しない場合のデフォルト値
+     * @return mixed
      */
     public function getGet(string $name, $default = null)
     {
@@ -41,8 +41,8 @@ class Request
      * $_POST変数から値を取得する
      * 
      * @param string $name
-     * @param null $default
-     * @return string|null
+     * @param mixed $default
+     * @return mixed
      */
     public function getPost(string $name, $default = null)
     {
@@ -74,7 +74,7 @@ class Request
 
 
     /**
-     * HTTPSでアクセスされたかどうかチェックする
+     * SSLでアクセスされたかどうか判定
      * 
      * @return boolean
      */
@@ -91,7 +91,7 @@ class Request
 
 
     /**
-     * リクエストされたURLの情報を取得する
+     * リクエストURLを取得する
      * 
      * @return string $_SERVER['REQUEST_URI'] URLのホスト部分以降の値
      */

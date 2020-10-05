@@ -8,7 +8,7 @@ class Response
     protected $http_headers = array();
 
     /**
-     * 各プロパティに設定された値を元にレスポンス送信を行う
+     * レスポンスを送信
      */
     public function send()
     {
@@ -27,9 +27,9 @@ class Response
 
 
     /**
-     * クライアントに返す情報をcontentプロパティに格納する
+     * コンテンツを設定
      * 
-     * @param mixed $content HTMLなどクライアントに返す情報
+     * @param string $content HTMLなどクライアントに返す情報
      */
     public function setContent($content)
     {
@@ -41,10 +41,10 @@ class Response
     /**
      * HTTPのステータスコードを格納する
      *
-     * @param string $status_code
+     * @param int $status_code
      * @param string $status_text
      */
-    public function setStatusCode(string $status_code, $status_text = '')
+    public function setStatusCode(int $status_code, $status_text = '')
     {
         $this->status_code = $status_code;
         $this->status_text = $status_text;
@@ -53,12 +53,12 @@ class Response
 
 
     /**
-     * HTTPヘッダを連想配列形式で格納する
+     * HTTPレスポンスヘッダを設定
      * 
-     * @param $name
-     * @param $value
+     * @param string $name
+     * @param mixed $value
      */
-    public function setHttpHeader($name,$value)
+    public function setHttpHeader(string $name, $value)
     {
         $this->http_headers[$name] = $value;
     }

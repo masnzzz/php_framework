@@ -22,10 +22,10 @@ class View
     /**
      * $layout_variablesプロパティに値を設定する
      * 
-     * @param $name
-     * @param $value
+     * @param string $name
+     * @param mixed $value
      */
-    public function setLayoutVar($name, $value)
+    public function setLayoutVar(string $name, $value)
     {
         // レイアウトファイルの読み込みを行う際に値を渡す
         $this->layout_variables[$name] = $value;
@@ -34,14 +34,14 @@ class View
 
 
     /**
-     * ビューファイルの読み込みを行う
+     * ビューファイルをレンダリング
      * 
      * @param string $_path      ビューファイルへのパス
      * @param array  $_variables ビューファイルに渡す変数
-     * @param false  $_layout    レイアウトファイル名 Controllerから呼び出された場合のみtrue
-     * @return false|mixed|string
+     * @param mixed  $_layout    レイアウトファイル名 Controllerから呼び出された場合のみtrue
+     * @return string
      */
-    public function render(string $_path, $_variables = array(), $_layout = false)
+    public function render(string $_path, $_variables = array(), $_layout = false): string
     {
         // base_dirの中からビューファイルのパスを取得する
         $_file = $this->base_dir . '/' . $_path . '.php';
@@ -80,7 +80,7 @@ class View
      * @param string $string
      * @return string htmlspecialchars($string, ENT_QUOTES, 'UTF-8');
      */
-    public function escape(string $string)
+    public function escape(string $string): string
     {
         return htmlspecialchars($string, ENT_QUOTES, 'UTF-8');
     }

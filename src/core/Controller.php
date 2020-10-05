@@ -13,9 +13,9 @@ abstract class Controller
 
     /**
      * Controller constructor.
-     * @param $application
+     * @param Application $application
      */
-    public function __construct($application)
+    public function __construct(Application $application)
     {
         // コントローラ名からクラス名を逆算してプロパティに設定
         $this->controller_name = strtolower(substr(get_class($this), 0, -10));
@@ -34,9 +34,10 @@ abstract class Controller
      *
      * @param string $action
      * @param array $params
-     * @return mixed
-     * @throws HttpNotFoundException
-     * @throws UnauthorizedActionException
+     * @return string レスポンスとして返すコンテンツ
+     * 
+     * @throws HttpNotFoundException アクションが存在しない場合
+     * @throws UnauthorizedActionException 認証が必須なアクションに認証前にアクセスした場合
      */
     public function run(string $action, $params = array())
     {
@@ -61,15 +62,14 @@ abstract class Controller
 
 
     /**
-     * レンダリングを実行する
-     * ビューファイルの読み込み処理をラッピングして返す
+     * ビューファイルのレンダリング
      *
-     * @param array $variables
-     * @param null $template HTMLテンプレート
-     * @param string $layout
-     * @return false|mixed|string
+     * @param array $variables テンプレートに渡す変数の連想配列
+     * @param string $template ビューファイル名(nullの場合はアクション名を使う)
+     * @param string $layout レイアウトファイル名
+     * @return string レンダリングしたビューファイルの内容
      */
-    protected function render($variables = array(), $template = null, $layout = 'layout')
+    protected function render($variables = array(), $template = null, $layout = 'layout'): string
     {
         // デフォルト値を連想配列で指定する
         $defaults = array(
@@ -96,22 +96,23 @@ abstract class Controller
 
 
     /**
-     * 404エラー画面に遷移する
+     * 404エラー画面を出力
      * アクション内でリクエストされた情報が存在しない場合このメソッドを呼び出してエラー画面に遷移する
      * 
      * @throws HttpNotFoundException
      */
     protected function forward404()
     {
-        throw new HttpNotFoundException('Forwarded 404 page from' . $this->controller_name . '/' . $this->action_name);
+        throw new HttpNotFoundException('Forwarded 404 page from'
+            . $this->controller_name . '/' . $this->action_name);
     }
 
 
 
     /**
-     * リダイレクト処理を実行する
+     * 指定されたURLへリダイレクト
      * 
-     * @param $url
+     * @param string $url
      */
     protected function redirect($url)
     {
@@ -133,12 +134,12 @@ abstract class Controller
 
 
     /**
-     * トークンを生成し、セッションに格納した上でトークンを返す
+     * CSRFトークンを生成
      * 
      * @param string $form_name
      * @return string $token
      */
-    protected function generateCsrfToken(string $form_name)
+    protected function generateCsrfToken(string $form_name): string
     {
         $key = 'csrf_tokens/' . $form_name;
         $tokens = $this->session->get($key, array());
@@ -159,6 +160,7 @@ abstract class Controller
 
 
     /**
+     * CSRFトークンが妥当かチェック
      * セッション上に格納されているトークンからPOSTされたトークンを探す
      * 
      * @param string $form_name
@@ -183,7 +185,7 @@ abstract class Controller
 
 
     /**
-     * ログインが必要かどうかを判定する
+     * 指定されたアクションが認証済みでないとアクセスできないか判定
      * 
      * @param string $action
      * @return bool
@@ -192,9 +194,9 @@ abstract class Controller
     {
         if ($this->auth_actions === true || (is_array($this->auth_actions) && in_array($action, $this->auth_actions))) {
             // $auth_actionsプロパティを元に指定したアクションがログイン必須かどうかチェックする
-            return false;
+            return true;
         }
         
-        return true;
+        return false;
     }
 }

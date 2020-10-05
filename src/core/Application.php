@@ -16,12 +16,10 @@ abstract class Application
     protected $response;
     protected $session;
     protected $db_manager;
-    protected $router;
-    protected $login_action = array();
 
     /**
      * Application constructor.
-     * @param false $debug
+     * @param bool $debug
      */
     public function __construct($debug = false)
     {
@@ -35,9 +33,9 @@ abstract class Application
     /**
      * デバッグモードに応じてエラー表示処理を変更する
      * 
-     * @param $debug
+     * @param bool $debug
      */
-    protected function setDebugMode($debug)
+    protected function setDebugMode(bool $debug)
     {
         if ($debug) {
             $this->debug = true;
@@ -52,7 +50,7 @@ abstract class Application
 
 
     /**
-     * クラスの初期化処理を行う
+     * アプリケーションの初期化処理を行う
      */
     public function initialize()
     {
@@ -67,9 +65,9 @@ abstract class Application
 
 
     /**
-     * 個別のアプリケーションで設定をする
+     * アプリケーションの設定
      */
-    public function configure()
+    protected function configure()
     {
     }
 
@@ -77,13 +75,17 @@ abstract class Application
 
     /**
      * アプリケーションのルートディレクトリへのパスを返す
+     * 
+     * @return string ルートディレクトリへのファイルシステム上の絶対パス
      */
     abstract public function getRootDir();
 
 
 
     /**
-     * ルーティング定義配列を返す
+     * ルーティングを取得
+     * 
+     * @return array
      */
     abstract protected function registerRoutes();
 
@@ -94,47 +96,103 @@ abstract class Application
      * 
      * @return bool
      */
-    public function isDebugMode()
+    public function isDebugMode(): bool
     {
         return $this->debug;
     }
 
-    public function getRequest()
+
+
+    /**
+     * Requestオブジェクトを取得
+     *
+     * @return Request
+     */
+    public function getRequest(): Request
     {
         return $this->request;
     }
 
-    public function getResponse()
+
+
+    /**
+     * Responseオブジェクトを取得
+     *
+     * @return Response
+     */
+    public function getResponse(): Response
     {
         return $this->response;
     }
 
-    public function getSession()
+
+
+    /**
+     * Sessionオブジェクトを取得
+     *
+     * @return Session
+     */
+    public function getSession(): Session
     {
         return $this->session;
     }
 
-    public function getDbManager()
+
+
+    /**
+     * DbManagerオブジェクトを取得
+     *
+     * @return DbManager
+     */
+    public function getDbManager(): DbManager
     {
         return $this->db_manager;
     }
 
-    public function getControllerDir()
+
+
+    /**
+     * コントローラファイルが格納されているディレクトリへのパスを取得
+     *
+     * @return string
+     */
+    public function getControllerDir(): string
     {
         return $this->getRootDir() . '/controllers';
     }
 
-    public function getViewDir()
+
+
+    /**
+     * ビューファイルが格納されているディレクトリへのパスを取得
+     *
+     * @return string
+     */
+    public function getViewDir(): string
     {
         return $this->getRootDir() . '/views';
     }
 
-    public function getModelDir()
+
+
+    /**
+     * モデルファイルが格納されているディレクトリへのパスを取得
+     *
+     * @return string
+     */
+    public function getModelDir(): string
     {
         return $this->getRootDir() . '/models';
     }
 
-    public function getWebDir()
+
+
+    /**
+     * ドキュメントルートへのパスを取得
+     *
+     * @return string
+     */
+    public function getWebDir(): string
     {
         return $this->getRootDir() . '/web';
     }
@@ -142,9 +200,9 @@ abstract class Application
 
 
     /**
-     * runActionに値を渡し、レスポンス送信する
+     * rアプリケーションを実行する
      * 
-     * @throws HttpNotFoundException
+     * @throws HttpNotFoundException ルートが見つからない場合
      */
     public function run()
     {
@@ -176,12 +234,13 @@ abstract class Application
     /**
      * アクションを実行
      *
-     * @param $controller_name
-     * @param $action
+     * @param string $controller_name
+     * @param string $action
      * @param array $params
-     * @throws HttpNotFoundException
+     * 
+     * @throws HttpNotFoundException コントローラが特定できない場合
      */
-    public function runAction($controller_name, $action, $params = array())
+    public function runAction(string $controller_name, string $action, $params = array())
     {
         $controller_class = ucfirst($controller_name) . 'Controller';
         
@@ -200,12 +259,12 @@ abstract class Application
 
 
     /**
-     * コントローラークラスファイルを読み込む
+     * 指定されたコントローラ名から対応するControllerオブジェクトを取得
      * 
      * @param string $controller_class
-     * @return false|mixed
+     * @return Controller
      */
-    protected function findController(string $controller_class)
+    protected function findController(string $controller_class): Controller
     {
         if (!class_exists($controller_class)) {
             // クラスが定義済みではなかった場合
@@ -231,11 +290,11 @@ abstract class Application
 
 
     /**
-     * 404エラーを返す
+     * 404エラー画面を返す設定
      * 
-     * @param $e
+     * @param Exception $e
      */
-    protected function render404Page($e)
+    protected function render404Page(Exception $e)
     {
         $this->response->setStatusCode(404, 'Not Found');
         $message = $this->isDebugMode() ? $e->getMessage() : 'Page not found.';
