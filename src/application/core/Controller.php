@@ -45,4 +45,38 @@ abstract class Controller
         // アクションを実行
         return $this->$action_method($params);
     }
+
+
+    /**
+     * レンダリングを実行する
+     * ビューファイルの読み込み処理をラッピングして返す
+     *
+     * @param array $variables
+     * @param null $template HTMLテンプレート
+     * @param string $layout
+     * @return false|mixed|string
+     */
+    protected function render($variables = array(), $template = null, $layout = 'layout')
+    {
+        // デフォルト値を連想配列で指定する
+        $defaults = array(
+            'request' => $this->request,
+            'base_url' => $this->request->getBaseUrl(),
+            'session' => $this->session,
+        );
+        
+        // Viewクラスのインスタンスを作成 デフォルト値を引数として指定
+        $view = new View($this->application->getViewDir(), $defaults);
+        
+        if (is_null($template)) {
+            // テンプレート名が指定されてない場合はアクション名をファイル名として指定する
+            $template = $this->action_name;
+        }
+        
+        // コントローラ名をテンプレート名の先頭に付与する
+        $path = $this->controller_name . '/' . $template;
+        
+        // ビューファイルの読み込みを実行する
+        return $view->render($path, $variables, $layout);
+    }
 }
